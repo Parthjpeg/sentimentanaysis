@@ -14,11 +14,11 @@ def app():
 
     st.header("Social Media Analytics Dashboard")
 
-    function_option = st.sidebar.selectbox("Select the platform: ",["Twitter", "Facebook", "Instagram"] )
+    function_option = "Twitter"#st.sidebar.selectbox("Select the platform: ",["Twitter", "Facebook", "Instagram"] )
 
     if function_option == "Twitter":
         # st.image('banner.png')
-        st.sidebar.checkbox("Include retweets")
+        #st.sidebar.checkbox("Include retweets")
         
         st.write(" ")
         st.write(" ")
@@ -36,26 +36,26 @@ def app():
             # mention = analyse_mention(data)
             # hastag = analyse_hastag(data)
 
-            st.write(" ")
-            st.write(" ")
-            st.header("Extracted and Preprocessed Dataset")
-            st.write(data)
+            # st.write(" ")
+            # st.write(" ")
+            # st.header("Extracted and Preprocessed Dataset")
+            # st.write(data)
             #download_data(data, label="twitter_sentiment_filtered")
             st.write(" ")
 
             col1, col2, col3 = st.columns(3)
             with col2:
-                st.markdown("### EDA On the Data")
+                st.markdown("## Analysis of the Data")
 
 
-            # col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
 
-            # with col1:
-            #     st.text("Top 10 @Mentions in {} tweets".format(number_of_tweets))
-            #     st.bar_chart(mention)
-            # with col2:
-            #     st.text("Top 10 Hastags used in {} tweets".format(number_of_tweets))
-            #     st.bar_chart(hastag)
+            with col1:
+                st.markdown("{} is the Subjectivity of this tweet".format(data["Subjectivity"]))
+            with col2:
+                st.markdown("{} is the Polarity of this tweet".format(data["Polarity"]))
+            with col3:
+                st.markdown("This tweet has a {} Sentiment".format(data["Analysis"]))
             
             # col3, col4 = st.columns(2)
             # with col3:
