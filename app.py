@@ -23,7 +23,7 @@ def app():
         st.write(" ")
         st.write(" ")
         st.write(" ")
-        word_query = st.text_input("Enter a Sentence to check semtiment", placeholder="Data")
+        word_query = st.text_input("Enter a Tweet to check semtiment", placeholder="Data")
         print(word_query)
         # st.write(" ")
         # number_of_tweets = st.slider("How many tweets would you like to analyse {}".format(word_query), min_value=100, max_value=10000)
@@ -36,10 +36,10 @@ def app():
             # mention = analyse_mention(data)
             # hastag = analyse_hastag(data)
 
-            # st.write(" ")
-            # st.write(" ")
-            # st.header("Extracted and Preprocessed Dataset")
-            # st.write(data)
+            st.write(" ")
+            st.write(" ")
+            st.header("Extracted and Preprocessed Dataset")
+            st.write(data)
             #download_data(data, label="twitter_sentiment_filtered")
             st.write(" ")
 
