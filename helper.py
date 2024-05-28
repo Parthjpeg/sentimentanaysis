@@ -99,82 +99,79 @@ def getAnalysis(score):
   else:
     return 'Positive'
 
-@st.cache(allow_output_mutation=True)
-def preprocessing_data(word_query, number_of_tweets, function_option):
-
-  if function_option == "Twitter":
-    posts = tweepy.Cursor(api.search_tweets, q=word_query, count = 200, lang ="en", tweet_mode="extended").items((number_of_tweets))
+# @st.cache(allow_output_mutation=True)
+def preprocessing_data(word_query):
+  data = {"Text":word_query}
+  #if function_option == "Twitter":
+    #posts = tweepy.Cursor(api.search_tweets, q=word_query, count = 200, lang ="en", tweet_mode="extended").items((number_of_tweets))
     # response = client.search_recent_tweets(query=word_query, max_results=100)
     # print("RESPONSE:", response.meta)
   # if function_option == "Search By Username":
     # posts = tweepy.Cursor(api.user_timeline, screen_name=word_query, count = 200, tweet_mode="extended").items((number_of_tweets))
   # posts = response.data
+  # data  = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
 
-  data  = pd.DataFrame([tweet.full_text for tweet in posts], columns=['Tweets'])
+  # data["mentions"] = data["Tweets"].apply(extract_mentions)
+  # data["hastags"] = data["Tweets"].apply(extract_hastag)
+  # data['links'] = data['Tweets'].str.extract('(https?:\/\/\S+)', expand=False).str.strip()
+  # data['retweets'] = data['Tweets'].str.extract('(RT[\s@[A-Za-z0–9\d\w]+)', expand=False).str.strip()
 
-  data["mentions"] = data["Tweets"].apply(extract_mentions)
-  data["hastags"] = data["Tweets"].apply(extract_hastag)
-  data['links'] = data['Tweets'].str.extract('(https?:\/\/\S+)', expand=False).str.strip()
-  data['retweets'] = data['Tweets'].str.extract('(RT[\s@[A-Za-z0–9\d\w]+)', expand=False).str.strip()
+  # data['Tweets'] = data['Tweets'].apply(cleanTxt)
+  # discard = ["CNFTGiveaway", "GIVEAWAYPrizes", "Giveaway", "Airdrop", "GIVEAWAY", "makemoneyonline", "affiliatemarketing"]
+  # data = data[~data["Tweets"].str.contains('|'.join(discard))]
 
-  data['Tweets'] = data['Tweets'].apply(cleanTxt)
-  discard = ["CNFTGiveaway", "GIVEAWAYPrizes", "Giveaway", "Airdrop", "GIVEAWAY", "makemoneyonline", "affiliatemarketing"]
-  data = data[~data["Tweets"].str.contains('|'.join(discard))]
-
-  data['Subjectivity'] = data['Tweets'].apply(getSubjectivity)
-  data['Polarity'] = data['Tweets'].apply(getPolarity)
-
-  data['Analysis'] = data['Polarity'].apply(getAnalysis)
+  data['Subjectivity'] = getSubjectivity(data['Text'])
+  data['Polarity'] = getPolarity(data['Text'])
+  data['Analysis'] = getAnalysis(data['Polarity'])
 
   return data
 
+# def download_data(data, label):
+#     current_time = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
+#     current_time = "{}.{}-{}-{}".format(current_time.date(), current_time.hour, current_time.minute, current_time.second)
+#     export_data = st.download_button(
+#                         label="Download {} data as CSV".format(label),
+#                         data=data.to_csv(),
+#                         file_name='{}{}.csv'.format(label, current_time),
+#                         mime='text/csv',
+#                         help = "When You Click On Download Button You can download your {} CSV File".format(label)
+#                     )
+#     return export_data
 
-def download_data(data, label):
-    current_time = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
-    current_time = "{}.{}-{}-{}".format(current_time.date(), current_time.hour, current_time.minute, current_time.second)
-    export_data = st.download_button(
-                        label="Download {} data as CSV".format(label),
-                        data=data.to_csv(),
-                        file_name='{}{}.csv'.format(label, current_time),
-                        mime='text/csv',
-                        help = "When You Click On Download Button You can download your {} CSV File".format(label)
-                    )
-    return export_data
 
+# def analyse_mention(data):
 
-def analyse_mention(data):
+#   mention = pd.DataFrame(data["mentions"].to_list()).add_prefix("mention_")
 
-  mention = pd.DataFrame(data["mentions"].to_list()).add_prefix("mention_")
-
-  try:
-    mention = pd.concat([mention["mention_0"], mention["mention_1"], mention["mention_2"]], ignore_index=True)
-  except:
-    mention = pd.concat([mention["mention_0"]], ignore_index=True)
+#   try:
+#     mention = pd.concat([mention["mention_0"], mention["mention_1"], mention["mention_2"]], ignore_index=True)
+#   except:
+#     mention = pd.concat([mention["mention_0"]], ignore_index=True)
   
-  mention = mention.value_counts().head(10)
+#   mention = mention.value_counts().head(10)
   
-  return mention
+#   return mention
 
 
 
-def analyse_hastag(data):
+# def analyse_hastag(data):
   
-  hastag = pd.DataFrame(data["hastags"].to_list()).add_prefix("hastag_")
+#   hastag = pd.DataFrame(data["hastags"].to_list()).add_prefix("hastag_")
 
-  try:
-    hastag = pd.concat([hastag["hastag_0"], hastag["hastag_1"], hastag["hastag_2"]], ignore_index=True)
-  except:
-    hastag = pd.concat([hastag["hastag_0"]], ignore_index=True)
+#   try:
+#     hastag = pd.concat([hastag["hastag_0"], hastag["hastag_1"], hastag["hastag_2"]], ignore_index=True)
+#   except:
+#     hastag = pd.concat([hastag["hastag_0"]], ignore_index=True)
   
-  hastag = hastag.value_counts().head(10)
+#   hastag = hastag.value_counts().head(10)
 
-  return hastag
+#   return hastag
 
 
 
 
 def graph_sentiment(data):
 
-  analys = data["Analysis"].value_counts().reset_index().sort_values(by="index", ascending=False)
+  analys = data["Analysis"]
   
   return analys
